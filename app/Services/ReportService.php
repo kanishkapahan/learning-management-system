@@ -54,8 +54,13 @@ class ReportService
             ->join('students', 'students.id', '=', 'attendances.student_id')
             ->join('batches', 'batches.id', '=', 'attendances.batch_id')
             ->when($filters['batch_id'] ?? null, fn($q, $id) => $q->where('batches.id', $id))
-            ->selectRaw('students.student_no, (students.first_name || \' \' || students.last_name) as student_name, batches.batch_code,
-                ROUND((SUM(CASE WHEN attendances.status IN (\'present\',\'late\') THEN 1 ELSE 0 END) * 1.0 / COUNT(*))*100,2) as attendance_percentage')
+            ->selectRaw(
+                DB::getDriverName() === 'sqlite'
+                    ? 'students.student_no, (students.first_name || \' \' || students.last_name) as student_name, batches.batch_code,
+                       ROUND((SUM(CASE WHEN attendances.status IN (\'present\',\'late\') THEN 1 ELSE 0 END) * 1.0 / COUNT(*))*100,2) as attendance_percentage'
+                    : 'students.student_no, CONCAT(students.first_name, \' \', students.last_name) as student_name, batches.batch_code,
+                       ROUND((SUM(CASE WHEN attendances.status IN (\'present\',\'late\') THEN 1 ELSE 0 END) / COUNT(*))*100,2) as attendance_percentage'
+            )
             ->groupBy('students.student_no', 'students.first_name', 'students.last_name', 'batches.batch_code')
             ->having('attendance_percentage', '<', 80)
             ->orderBy('attendance_percentage')

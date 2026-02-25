@@ -31,7 +31,11 @@ class DashboardService
     {
         return [
             'monthlyEnrollments' => DB::table('enrollments')
-                ->selectRaw('strftime(\'%Y-%m\', enrolled_at) as month, COUNT(*) as total')
+                ->selectRaw(
+                    DB::getDriverName() === 'sqlite'
+                        ? 'strftime(\'%Y-%m\', enrolled_at) as month, COUNT(*) as total'
+                        : 'DATE_FORMAT(enrolled_at, \'%Y-%m\') as month, COUNT(*) as total'
+                )
                 ->groupBy('month')->orderBy('month')->get(),
             'averageMarksPerCourse' => Result::query()
                 ->join('exams', 'exams.id', '=', 'results.exam_id')
