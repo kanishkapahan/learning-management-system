@@ -8,6 +8,7 @@ use App\Repositories\Contracts\StudentRepositoryInterface;
 use App\Repositories\Eloquent\ExamRepository;
 use App\Repositories\Eloquent\ResultRepository;
 use App\Repositories\Eloquent\StudentRepository;
+use Illuminate\Pagination\Paginator;
 use Illuminate\Support\ServiceProvider;
 use Illuminate\Validation\Rules\Password;
 
@@ -28,6 +29,8 @@ class AppServiceProvider extends ServiceProvider
      */
     public function boot(): void
     {
+        Paginator::useBootstrapFive();
+
         date_default_timezone_set(config('app.timezone', 'UTC'));
 
         Password::defaults(function () {

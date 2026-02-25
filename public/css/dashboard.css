@@ -1359,6 +1359,11 @@ body {
 }
 
 /* ---- Card Pagination ---- */
+.pagination svg {
+    width: 1em;
+    height: 1em;
+    vertical-align: middle;
+}
 .page-card .pagination {
     margin: 0.75rem 0 0;
     gap: 0.25rem;
