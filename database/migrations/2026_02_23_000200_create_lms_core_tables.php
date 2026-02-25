@@ -229,7 +229,9 @@ return new class extends Migration
             $table->index(['event', 'created_at']);
         });
 
-        DB::statement("CREATE OR REPLACE VIEW vw_exam_pass_rates AS
+        DB::statement('DROP VIEW IF EXISTS vw_exam_pass_rates');
+
+        DB::statement("CREATE VIEW vw_exam_pass_rates AS
             SELECT r.exam_id,
                    e.batch_id,
                    COUNT(r.id) AS total_results,
